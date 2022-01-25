@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:shimmer/shimmer.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
   static final String id = "home_page";
@@ -12,6 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final PageController _controller = PageController();
   int selectIndex = 0;
+  late bool isLoading;
 
   loading() {
     Timer.periodic(Duration(seconds: 3), (timer) {
@@ -24,10 +27,22 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  shimmerLoading() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    await Future.delayed(Duration(seconds: 5), () {});
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     loading();
+    shimmerLoading();
   }
 
   @override
@@ -131,11 +146,12 @@ class _HomePageState extends State<HomePage> {
               SizedBox(
                 height: 10,
               ),
+              //
               // Grid widget
               SizedBox(
-                height: 220,
-                child: buildGridViewHotel(4),
-              ),
+                      height: 220,
+                      child: buildGridViewHotel(4),
+                    ),
 
               SizedBox(
                 height: 15,
@@ -174,8 +190,53 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  GridView buildGridViewHotel(int imageIndex) {
-    return GridView.builder(
+  Widget buildGridViewHotel(int imageIndex) {
+    return isLoading ? Shimmer.fromColors(child: GridView.builder(
+      scrollDirection: Axis.horizontal,
+      // padding: EdgeInsets.symmetric(horizontal: 20),
+      itemCount: 25,
+      shrinkWrap: true,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        childAspectRatio: 0.7,
+        mainAxisSpacing: 20,
+        crossAxisCount: 1,
+      ),
+      itemBuilder: (BuildContext context, int index) {
+        return GridTile(
+            footer: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GridTileBar(
+                leading: Text(
+                  "Hotel ${index + 1}",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              ),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage(
+                          "assets/images/ic_hotel${(index + 4) % imageIndex}.jpg"))),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Colors.black.withOpacity(0.4),
+                        Colors.black.withOpacity(0.3),
+                        Colors.black.withOpacity(0.2),
+                        Colors.black.withOpacity(0.3),
+                        Colors.black.withOpacity(0.4),
+                      ]),
+                ),
+              ),
+            ));
+      },
+    ), baseColor: Colors.grey.shade400, highlightColor: Colors.white): GridView.builder(
       scrollDirection: Axis.horizontal,
       // padding: EdgeInsets.symmetric(horizontal: 20),
       itemCount: 25,
