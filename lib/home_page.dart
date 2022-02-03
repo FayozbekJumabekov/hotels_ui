@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
       isLoading = true;
     });
 
-    await Future.delayed(Duration(seconds: 5), () {});
+    await Future.delayed(Duration(seconds: 8), () {});
     setState(() {
       isLoading = false;
     });
@@ -203,22 +203,9 @@ class _HomePageState extends State<HomePage> {
       ),
       itemBuilder: (BuildContext context, int index) {
         return GridTile(
-            footer: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GridTileBar(
-                leading: Text(
-                  "Hotel ${index + 1}",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-              ),
-            ),
             child: Container(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                          "assets/images/ic_hotel${(index + 4) % imageIndex}.jpg"))),
+                  borderRadius: BorderRadius.circular(30)),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
